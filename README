@@ -1,0 +1,98 @@
+# 🎓 Orientation+ — Assistant Intelligent d’Orientation Universitaire
+
+## 📌 Contexte & Problématique
+
+Choisir une orientation universitaire est une **décision critique** qui impacte directement l’avenir académique et professionnel des étudiants.  
+Aujourd’hui, de nombreux étudiants font face à :
+
+- ❌ Un manque d’informations claires et centralisées  
+- ❌ Des choix basés sur l’entourage plutôt que sur leurs compétences réelles  
+- ❌ Une mauvaise adéquation entre profil académique, intérêts personnels et débouchés  
+- ❌ Un taux élevé de réorientation et d’abandon universitaire  
+
+👉 **Le besoin principal** :  
+> Disposer d’un outil intelligent, objectif et personnalisé pour guider chaque étudiant vers l’orientation qui lui correspond réellement.
+
+---
+
+## 💡 Solution Proposée
+
+**Orientation+** est une application intelligente d’aide à l’orientation universitaire basée sur l’**intelligence artificielle**, conçue pour accompagner les étudiants dans leur prise de décision.
+
+L’application analyse :
+- Le **profil académique** de l’étudiant
+- Ses **compétences**
+- Ses **centres d’intérêt**
+- Ses **objectifs professionnels**
+
+Afin de proposer des **recommandations personnalisées et pertinentes**.
+
+---
+
+## 🎯 Objectifs de l’Application
+
+- ✔️ Réduire l’incertitude et le stress liés au choix d’orientation  
+- ✔️ Aider l’étudiant à mieux se connaître  
+- ✔️ Améliorer l’adéquation profil ↔ filière ↔ métier  
+- ✔️ Diminuer les erreurs d’orientation et les abandons  
+- ✔️ Offrir une expérience moderne, simple et interactive  
+
+---
+
+## 🧠 Fonctionnalités Clés
+
+- 🧩 Analyse intelligente du profil étudiant  
+- 📊 Recommandation personnalisée des filières universitaires  
+- 🏫 Informations claires sur les parcours, débouchés et compétences requises  
+- 🤖 Assistant conversationnel (IA) pour guider l’étudiant pas à pas  
+- 📱 Interface intuitive et accessible  
+
+---
+
+## 👥 Public Cible
+
+- 🎓 Élèves du secondaire
+- 🎓 Nouveaux bacheliers
+- 🎓 Étudiants en réorientation
+- 👨‍👩‍👧 Parents et conseillers pédagogiques
+
+---
+
+## 🚀 Valeur Ajoutée
+
+Contrairement aux solutions classiques basées uniquement sur les notes ou des questionnaires génériques, **Orientation+** :
+
+- Combine **données académiques + intérêts + IA**
+- Fournit une **orientation personnalisée**, non standardisée
+- Met l’étudiant au **centre de la décision**
+- S’adapte à différents profils et contextes éducatifs
+
+---
+
+## 🛠️ Technologies (exemple)
+
+- Backend : FastAPI / Spring Boot  
+- IA : Machine Learning, NLP, Recommandation intelligente  
+- Base de données :  MySQL  
+- Frontend : Flutter /  Web  
+- Architecture : API REST, RAG, Agents intelligents  
+
+---
+
+## 📈 Vision
+
+À long terme, Orientation+ ambitionne de devenir :
+- Une **plateforme de référence** en orientation académique
+- Un outil utilisé par les établissements éducatifs
+- Un accompagnateur intelligent pour chaque étudiant, à chaque étape de son parcours
+
+---
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues !  
+N’hésitez pas à proposer des améliorations, signaler des bugs ou suggérer de nouvelles fonctionnalités.
+
+---
+
+
