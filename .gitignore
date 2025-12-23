@@ -1,0 +1,55 @@
+# ========================
+# Logs
+# ========================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+uvicorn.log
+
+# ========================
+# Node / Frontend
+# ========================
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# ========================
+# Python / FastAPI
+# ========================
+venv/
+.venv/
+env/
+ENV/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.eggs/
+*.egg-info/
+build/
+develop-eggs/
+
+# ========================
+# Environment variables
+# ========================
+.env
+
+# ========================
+# IDE / OS
+# ========================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
