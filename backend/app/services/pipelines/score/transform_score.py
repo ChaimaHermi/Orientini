@@ -1,164 +1,208 @@
-from pathlib import Path
 import json
 import re
-from typing import List, Dict, Any, Optional
+from pathlib import Path
+from typing import Dict, Any, Optional
 
-# ------------------------------------------------------------------
-# Chemins
-# ------------------------------------------------------------------
+# ---------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parents[4]
 EXTRACTED_DIR = BASE_DIR / "data" / "extracted"
 PROCESSED_DIR = BASE_DIR / "data" / "processed"
 
-INPUT_JSON = "structured_scores_2025.json"
-OUTPUT_JSON = "processed_scores_2025.json"
-
-input_path = EXTRACTED_DIR / INPUT_JSON
-output_path = PROCESSED_DIR / OUTPUT_JSON
+INPUT_JSON = EXTRACTED_DIR / "structured_scores_2025.json"
+OUTPUT_JSON = PROCESSED_DIR / "processed_scores_2025.json"
 
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
+# Liste des universités tunisiennes
+TUNISIAN_UNIS = [
+    "تونس", "تونس المنار", "قرطاج", "منوبة", "جندوبة",
+    "نابل", "سوسة", "صفاقس", "قابس", "قفصة", "المنستير",
+    "القيروان", "سيدي بوزيد", "زغوان"
+]
+
+# Institutions keywords
+INSTITUTION_KEYWORDS = ["معهد", "المعهد", "كلية", "الكلية", "المدرسة", "المدرسة العليا"]
+
+
+# ---------------------------------------------------------------------
+# Normalisation du texte
+# ---------------------------------------------------------------------
 def normalize_text(text: str) -> str:
     if not text:
         return ""
-    text = text.strip()
-    text = " ".join(text.split())
-    text = text.replace("ةعماج(", "(جامعة ").replace(")(", ") (")
+    text = re.sub(r"[()]", " ", text)
+    return " ".join(text.split()).strip()
+
+
+# ---------------------------------------------------------------------
+# Correction des universités inversées
+# ---------------------------------------------------------------------
+def fix_reversed_university(text: str) -> str:
+    """
+    Corrige les cas où le gouvernorat apparaît avant l’institution :
+    Exemple :
+        'منوبة معهد الصحافة وعلوم الأخبار جامعة'
+    devient :
+        'معهد الصحافة وعلوم الأخبار جامعة منوبة'
+    """
+    tokens = text.split()
+    if not tokens:
+        return text
+
+    first = tokens[0]
+    if first in TUNISIAN_UNIS:
+        # Remove governorate from the start
+        tokens = tokens[1:]
+
+        # Find institution beginning
+        for i, t in enumerate(tokens):
+            if any(t.startswith(k) for k in INSTITUTION_KEYWORDS):
+                institution = " ".join(tokens[i:])
+                parent = f"جامعة {first}"
+                return f"{institution} {parent}"
+
     return text
 
+
+# ---------------------------------------------------------------------
+# Nettoyage Bac
+# ---------------------------------------------------------------------
 def clean_bac(bac: str) -> str:
     mapping = {
         "علوم تجريبية": "علوم تجريبية",
-        "إقتصاد وتصرف": "اقتصاد وتصرف",
-        "فرصتو داصتقإ": "اقتصاد وتصرف",
-        "رياضيات": "رياضيات",
-        "العلوم التقنية": "علوم تقنية",
-        "علوم اإلعالمية": "علوم إعلامية",
         "علوم الإعلامية": "علوم إعلامية",
+        "علوم اإلعلامية": "علوم إعلامية",
+        "إقتصاد وتصرف": "اقتصاد وتصرف",
+        "اقتصاد و تصرف": "اقتصاد وتصرف",
+        "رياضيات": "رياضيات",
+        "آداب": "آداب",
         "بادآ": "آداب",
-        "ةيبيرجت مولع": "علوم تجريبية",
-        "ةيملاعلإا مولع": "علوم إعلامية",
+        "العلوم التقنية": "علوم تقنية",
     }
     return mapping.get(bac.strip(), bac.strip())
 
+
+# ---------------------------------------------------------------------
+# Extract Duration
+# ---------------------------------------------------------------------
 def extract_duration(text: str) -> Optional[str]:
-    """استخراج المدة مثل '9 سنوات' أو '6 سنوات' من نص"""
-    match = re.search(r'(\d+)\s*سنوات?', text)
-    if match:
-        return f"{match.group(1)} سنوات"
-    return None
+    m = re.search(r"(\d+)\s*سنوات?", text)
+    return f"{m.group(1)} سنوات" if m else None
 
+
+# ---------------------------------------------------------------------
+# Check if text is requirement
+# ---------------------------------------------------------------------
 def is_requirement(text: str) -> bool:
-    """تحديد إذا كان النص متطلبًا (يتضمن كلمات مثل السن، اختبار، إجبارية...)"""
-    if not text:
-        return False
-    text_lower = text.lower()
-    requirement_keywords = [
-        "سن القصوى", "أقل من", "أكثر من", "غرة سبتمبر",
-        "اختبار", "إجبارية", "تطلب", "تربية بدنية", "مقابلة", "حد أقصى",
-        "شروط", "السن", "العمر", "في غرة", "إجباري", "علوم الحياة"
-    ]
-    return any(keyword in text_lower for keyword in requirement_keywords)
+    keywords = ["اختبار", "إجبار", "سن", "العمر", "مقابلة", "شروط", "يجب"]
+    t = text.lower().replace("،", " ")
+    return any(k in t for k in keywords)
 
+
+# ---------------------------------------------------------------------
+# Extraction robuste parent_university + university
+# ---------------------------------------------------------------------
 def extract_parent_university(university_raw: str) -> Dict[str, str]:
-    university = normalize_text(university_raw)
-    
-    match_open = re.search(r'\(جامعة\s*([^\(\)]+)', university)
-    if match_open:
-        parent = "جامعة " + match_open.group(1).strip()
-        university_clean = re.sub(r'\(جامعة\s*[^\(\)]+', '', university).strip("() ")
-        return {"university": university_clean or None, "parent_university": parent}
-    
-    match_closed = re.search(r'\(\s*جامعة\s*([^\(\)]+)\s*\)', university)
-    if match_closed:
-        parent = "جامعة " + match_closed.group(1).strip()
-        university_clean = re.sub(r'\(\s*جامعة\s*[^\(\)]+\s*\)', '', university).strip()
-        return {"university": university_clean or None, "parent_university": parent}
-    
-    if "(جامعة" in university and ")" in university:
-        parts = university.split("(جامعة")
-        if len(parts) >= 2:
-            before = parts[0].strip()
-            after = parts[1].strip()
-            parent_part = after.split(")")[0].strip()
-            parent = "جامعة " + parent_part
-            university_clean = before.strip("() ")
-            return {"university": university_clean or None, "parent_university": parent}
-    
-    return {"university": university or None, "parent_university": None}
+    text = normalize_text(university_raw)
 
-def transform_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
-    diploma_raw = normalize_text(entry.get("diploma", ""))
-    university_raw = normalize_text(entry.get("university", ""))
-    speciality_raw = normalize_text(entry.get("speciality", ""))
-    code = entry.get("code", "").strip()
-    bac = clean_bac(entry.get("bac", ""))
-    formula = entry.get("formula", "").strip()
+    # Fix reversed forms
+    text = fix_reversed_university(text)
+
+    if not text:
+        return {"university": None, "parent_university": None}
+
+    parent = None
+    institution = None
+
+    # 1️⃣ Detect explicit "جامعة X"
+    m = re.search(r"جامعة\s+([^\s]+)", text)
+    if m:
+        parent = "جامعة " + m.group(1).strip()
+
+    # 2️⃣ Detect institution
+    for kw in INSTITUTION_KEYWORDS:
+        if kw in text:
+            # Keep only what comes after the keyword
+            idx = text.index(kw)
+            institution = text[idx:]
+            break
+
+    # 3️⃣ Infer parent from governorate if missing
+    if not parent:
+        for g in TUNISIAN_UNIS:
+            if g in text:
+                parent = "جامعة " + g
+                break
+
+    # 4️⃣ Final cleanup
+    if institution:
+        institution = institution.replace(parent or "", "").strip()
+
+    return {
+        "university": institution or None,
+        "parent_university": parent
+    }
+
+
+# ---------------------------------------------------------------------
+# Transform entry
+# ---------------------------------------------------------------------
+def transform_entry(entry: Dict[str, Any], diploma_override: Optional[str]) -> Dict[str, Any]:
+
+    diploma_raw = normalize_text(entry.get("diploma"))
+    university_raw = normalize_text(entry.get("university"))
+    speciality_raw = normalize_text(entry.get("speciality"))
+    bac = clean_bac(entry.get("bac"))
+    code = entry.get("code")
+    formula = entry.get("formula")
     score = entry.get("score")
-    periode_raw = normalize_text(entry.get("periode", ""))
-    requirements_raw = normalize_text(entry.get("exigence", "")) if entry.get("exigence") else ""
+    periode = normalize_text(entry.get("periode", ""))
+    req_raw = normalize_text(entry.get("exigence", ""))
 
-    # ------------------ استخراج المدة (duration) ------------------
-    duration = None
-    
-    # 1. من عمود periode أولاً
-    if periode_raw:
-        duration = extract_duration(periode_raw)
-    
-    # 2. إذا لم توجد، من diploma
-    if not duration and diploma_raw:
-        duration = extract_duration(diploma_raw)
-    
-    # 3. إذا لم توجد، من requirements
-    if not duration and requirements_raw:
-        duration = extract_duration(requirements_raw)
-    
-    # إذا لم نجد مدة → افتراضي 3 سنوات (للإجازة العادية)
-    if not duration:
-        duration = "3 سنوات"
+    # Duration
+    duration = extract_duration(periode) or extract_duration(diploma_raw) or extract_duration(req_raw)
+    duration = duration or "3 سنوات"
 
-    # ------------------ معالجة diploma ------------------
-    if diploma_raw:
-        # إذا كان diploma هو فقط المدة أو متطلب → diploma = None
-        if extract_duration(diploma_raw) or is_requirement(diploma_raw):
-            diploma = None
-            # نقل المحتوى إلى requirements
-            if requirements_raw:
-                requirements = requirements_raw + "، " + diploma_raw
-            else:
-                requirements = diploma_raw
+    # BASE diploma handling
+    if diploma_override:
+        diploma = diploma_override
+    else:
+        if diploma_raw and diploma_raw != "الإجازة / الشعبة" and not extract_duration(diploma_raw):
+            diploma = diploma_raw
         else:
-            diploma = diploma_raw if not ("الشعبة" in diploma_raw or "/" in diploma_raw) else None
-            requirements = requirements_raw
+            diploma = None
+
+    # SPECIAL RULE 1 : الموسيقى
+    if diploma_raw == "الإجازة / الشعبة" and speciality_raw and "موسيقى" in speciality_raw:
+        diploma = "الإجازة في الموسيقى والعلوم الموسيقية"
+
+    # SPECIAL RULE 2 : الطب
+    if (duration == "9 سنوات") or (speciality_raw and "طب" in speciality_raw):
+        diploma = "الإجازة في الطب"
+
+    # SPECIAL RULE 3 : القابلة
+    if diploma_raw and "خاص باإلناث" in diploma_raw:
+        diploma = "الإجازة في علوم التوليد - قابلة"
+        speciality = "علوم التوليد - قابلة"
     else:
-        diploma = None
-        requirements = requirements_raw
-
-    # ------------------ تنظيف requirements من المدة ------------------
-    if duration != "3 سنوات" and requirements:
-        # إزالة المدة من requirements إذا كانت موجودة
-        requirements = re.sub(r'\d+\s*سنوات?', '', requirements)
-        requirements = re.sub(r'،\s*,', '،', requirements)  # تنظيف فواصل زائدة
-        requirements = requirements.strip("، ").strip()
-        if not requirements:
-            requirements = None
-
-    # ------------------ باقي الحقول ------------------
-    uni_dict = extract_parent_university(university_raw)
-    university = uni_dict["university"]
-    parent_university = uni_dict["parent_university"]
-
-    if speciality_raw:
-        speciality_raw = speciality_raw.replace(";", " - ").replace(" ; ", " - ")
-        speciality = " - ".join([s.strip() for s in speciality_raw.split("-") if s.strip()])
-    else:
+        # Normal speciality
         speciality = None
+        if speciality_raw:
+            speciality = " - ".join([s.strip() for s in speciality_raw.split("-") if s.strip()])
+
+    # Requirements
+    requirements = req_raw or None
+
+    # University
+    uni = extract_parent_university(university_raw)
 
     return {
         "code": code,
         "diploma": diploma,
-        "university": university,
-        "parent_university": parent_university,
+        "university": uni["university"],
+        "parent_university": uni["parent_university"],
         "speciality": speciality,
         "bac_section": bac,
         "formula": formula,
@@ -168,47 +212,41 @@ def transform_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
         "source_page": entry.get("page")
     }
 
+
+# ---------------------------------------------------------------------
+# MAIN
+# ---------------------------------------------------------------------
 def main():
-    if not input_path.exists():
-        print(f"الملف غير موجود: {input_path}")
-        return
 
-    print(f"قراءة {input_path}")
-    with open(input_path, 'r', encoding='utf-8') as f:
-        raw_data: List[Dict] = json.load(f)
+    with open(INPUT_JSON, "r", encoding="utf-8") as f:
+        raw_data = json.load(f)
 
-    print(f"{len(raw_data)} مدخلة محملة.")
+    # Detect codes belonging to music specialities
+    music_codes = {e["code"] for e in raw_data if "موسيقى" in normalize_text(e.get("speciality"))}
 
+    processed = []
     seen = set()
-    processed_data = []
 
-    for entry in raw_data:
-        key = (entry.get("code"), entry.get("bac"))
+    for e in raw_data:
+        key = (e.get("code"), e.get("bac"))
         if key in seen:
             continue
         seen.add(key)
 
-        transformed = transform_entry(entry)
-        if transformed["code"] and transformed["min_score"] is not None:
-            processed_data.append(transformed)
+        # If code is music → override diploma
+        diploma_override = "الإجازة في الموسيقى والعلوم الموسيقية" if e["code"] in music_codes else None
 
-    processed_data.sort(key=lambda x: x["code"])
+        t = transform_entry(e, diploma_override)
+        if t["code"] and t["min_score"] is not None:
+            processed.append(t)
 
-    print(f"{len(processed_data)} مدخلة نهائية.")
+    processed.sort(key=lambda x: x["code"])
 
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(processed_data, f, ensure_ascii=False, indent=2)
+    with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
+        json.dump(processed, f, ensure_ascii=False, indent=2)
 
-    print(f"تم الحفظ في: {output_path}")
+    print("✅ DONE. Total:", len(processed))
 
-    # تحقق من الأمثلة المشكلة
-    print("\n--- تصحيح الطب والصيدلة (مدة 9 و6 سنوات) ---")
-    for ex in processed_data:
-        if ex["code"] in ["10700", "34701"]:
-            print(f"Code: {ex['code']} | Bac: {ex['bac_section']}")
-            print(f"   duration: {ex['duration']}")
-            print(f"   requirements: {ex['requirements'] or 'لا يوجد'}")
-            print()
 
 if __name__ == "__main__":
     main()

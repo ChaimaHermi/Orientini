@@ -8,6 +8,7 @@ import re
 
 warnings.filterwarnings("ignore")
 
+# Chemins
 BASE_DIR = Path(__file__).resolve().parents[4]
 RAW_DIR = BASE_DIR / "data" / "raw"
 EXTRACTED_DIR = BASE_DIR / "data" / "extracted"
@@ -20,11 +21,12 @@ output_path = EXTRACTED_DIR / OUTPUT_FILE
 
 structured_data = []
 
+# Suppression des warnings pdfplumber
 old_stderr = sys.stderr
 sys.stderr = StringIO()
 
 def clean_and_reverse(text):
-    """Clean and properly reverse Arabic text from RTL PDF"""
+    """Nettoie et reverse le texte arabe correctement"""
     if not text:
         return ""
     text = text.strip()
@@ -36,7 +38,7 @@ try:
     with pdfplumber.open(pdf_path) as pdf:
         print(f"Total pages: {len(pdf.pages)}")
         
-        for page_num in range(39, len(pdf.pages)):  # Start from page 40
+        for page_num in range(39, len(pdf.pages)):  # À partir de la page 40
             page = pdf.pages[page_num]
             tables = page.extract_tables()
             
@@ -44,50 +46,60 @@ try:
                 continue
                 
             for table in tables:
-                if len(table) < 5:
+                if len(table) < 3:
                     continue
                 
                 previous = [""] * 7
-                current_diploma = ""
+                current_diploma = ""      # Nom classique de l'إجازة
+                current_preparatory = ""  # Nom du cycle préparatoire (ex: مرحلة تحضيرية مندمجة...)
                 
                 for row in table:
                     if row is None:
                         continue
                     
-                    # Ensure exactly 7 columns
+                    # Normalisation à 7 colonnes
                     if len(row) > 7:
                         row = row[:7]
                     elif len(row) < 7:
                         row += [""] * (7 - len(row))
                     
-                    # Clean each cell and reverse Arabic properly
+                    # Nettoyage et reverse arabe
                     cleaned_row = []
                     for cell in row:
-                        cell_text = "" if cell is None else cell.strip()
+                        cell_text = "" if cell is None else str(cell).strip()
                         cleaned_row.append(clean_and_reverse(cell_text))
                     
-                    # Fill down merged cells
+                    # Fill down des cellules mergées
                     for j in range(7):
                         if cleaned_row[j]:
                             previous[j] = cleaned_row[j]
                         else:
                             cleaned_row[j] = previous[j]
                     
-                    # Update current diploma when a new full diploma appears
-                    diploma_col = cleaned_row[6]
-                    if diploma_col and not diploma_col.startswith("3 سنوات") and "(امد)" not in diploma_col and not any(k in diploma_col for k in ["إجبارية", "اختبار", "تطلب"]):
-                        current_diploma = diploma_col
+                    diploma_raw = cleaned_row[6]
                     
-                    # Skip header rows
+                    # Détection d'un nouveau cycle préparatoire intégré
+                    if any(keyword in diploma_raw for keyword in ["مرحلة تحضيرية", "مندمجة", "فيزياء - كيمياء", "العلمية", "Préparatoire"]):
+                        current_preparatory = diploma_raw.strip()
+                        continue  # Ce n'est pas une ligne de données
+                    
+                    # Mise à jour du diploma normal
+                    if (diploma_raw and 
+                        not re.search(r'سن[تو]ان\s*\+\s*3', diploma_raw) and
+                        "(امد)" not in diploma_raw and
+                        not any(k in diploma_raw for k in ["إجبارية", "اختبار", "تطلب"])):
+                        current_diploma = diploma_raw.strip()
+                    
+                    # Skip des en-têtes
                     if any(kw in " ".join(cleaned_row) for kw in ["مجموع نقاط", "صيغة احتساب", "الشعبة", "المؤسسة", "الرمز", "الجامعة", "الشهادة"]):
                         continue
                     
-                    # Validate code: must be exactly 5 digits
+                    # Validation du code (5 chiffres)
                     code = cleaned_row[3].strip()
                     if not re.fullmatch(r'\d{5}', code):
                         continue
                     
-                    # Validate score
+                    # Validation du score
                     score_str = cleaned_row[0].replace(",", ".")
                     if score_str in ['', '-']:
                         continue
@@ -96,57 +108,53 @@ try:
                     except ValueError:
                         continue
                     
-                    # Clean university
-                    university = " ".join(cleaned_row[5].split())
+                    # Gestion spéciale des cycles préparatoires
+                    if current_preparatory and re.search(r'سن[تو]ان\s*\+\s*3', diploma_raw):
+                        diploma = current_preparatory
+                        periode = "سنتان +3 سنوات"
+                    else:
+                        diploma = current_diploma or None
+                        periode = None
                     
-                    # Clean speciality - multiple lines
-                    raw_speciality = row[4]  # Use raw row[4] before cleaning
-                    speciality_cell = "" if raw_speciality is None else raw_speciality
-                    speciality_lines = [clean_and_reverse(l.strip()) for l in speciality_cell.split('\n') if l.strip()]
-                    speciality = " - ".join(speciality_lines)
-                    
-                    # Extract periode and exigences safely from raw diploma column
-                    periode = None
+                    # Extraction période et exigences (sécurisée contre None)
                     exigences = []
-                    raw_diploma_cell = row[6]  # Use raw cell to avoid None
+                    raw_diploma_cell = row[6]  # Cellule brute pour éviter None après nettoyage
                     if raw_diploma_cell:
-                        diploma_lines = [l.strip() for l in raw_diploma_cell.split('\n') if l.strip()]
-                        for raw_line in diploma_lines:
-                            rev_line = clean_and_reverse(raw_line)
-                            if re.search(r'سنوات?\b', rev_line) or '(امد)' in raw_line:
+                        diploma_lines = [l.strip() for l in str(raw_diploma_cell).split('\n') if l.strip()]
+                        for line in diploma_lines:
+                            rev_line = clean_and_reverse(line)
+                            if re.search(r'\d+\s*سنوات?', rev_line) or '(امد)' in line:
                                 periode = rev_line
                             elif any(word in rev_line for word in ['اختبار', 'إجبارية', 'تطلب', 'تربية بدنية']):
                                 exigences.append(rev_line)
                     
+                    # University
+                    university_raw = cleaned_row[5].replace('\n', ' ').strip()
+                    university = " ".join(university_raw.split())
+                    
+                    # Speciality
+                    speciality_raw = cleaned_row[4].replace('\n', ' - ').strip()
+                    speciality = " ".join(speciality_raw.split())
+                    
                     entry = {
-                        "diploma": current_diploma.strip(),
-                        "university": university.strip(),
-                        "speciality": speciality.strip(),
+                        "diploma": diploma,
+                        "university": university,
+                        "speciality": speciality if speciality else None,
                         "code": code,
-                        "bac": cleaned_row[2].strip(),
-                        "formula": cleaned_row[1].strip(),
+                        "bac": cleaned_row[2],
+                        "formula": cleaned_row[1],
                         "score": score,
                         "page": page_num + 1,
                         "periode": periode,
                         "exigence": '، '.join(exigences) if exigences else None
                     }
-                    
                     structured_data.append(entry)
 
 finally:
     sys.stderr = old_stderr
 
-# Save to JSON
+# Sauvegarde
 with open(output_path, 'w', encoding='utf-8') as f:
     json.dump(structured_data, f, ensure_ascii=False, indent=4)
 
-print(f"\nExtraction completed: {len(structured_data)} records saved to {output_path}")
-
-if structured_data:
-    print("\n--- First 10 examples ---")
-    for i, ex in enumerate(structured_data[:10], 1):
-        print(f"{i}. Diploma: {ex['diploma']}")
-        print(f"   University: {ex['university']}")
-        print(f"   Speciality: {ex['speciality']}")
-        print(f"   Code: {ex['code']} | Score: {ex['score']} | Periode: {ex['periode']}")
-        print(f"   Exigence: {ex['exigence']}\n")
+print(f"Extraction terminée : {len(structured_data)} entrées sauvegardées dans {output_path}")
