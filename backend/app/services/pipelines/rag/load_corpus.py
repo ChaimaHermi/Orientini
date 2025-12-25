@@ -3,7 +3,8 @@ from pathlib import Path
 
 def load_corpus(path: Path) -> list[str]:
     """
-    Chaque bloc séparé par ### correspond à UNE formation complète.
+    Chaque bloc séparé par ### correspond à UNE formation complète
+    ou UNE règle complète.
     """
     text = path.read_text(encoding="utf-8")
 
