@@ -1,0 +1,30 @@
+<div class="model-selector">
+  <button class="selector-button" (click)="toggleDropdown()">
+    <span class="model-name">{{ selectedModel?.name || 'Select model' }}</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [class.rotated]="isOpen">
+      <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  
+  <div class="dropdown" *ngIf="isOpen" (clickOutside)="closeDropdown()">
+    <div class="dropdown-content">
+      <div class="dropdown-header">
+        <h4>Select a model</h4>
+      </div>
+      <div class="model-list">
+        <button class="model-option" 
+                *ngFor="let model of models" 
+                (click)="selectModel(model)"
+                [class.selected]="model.id === selectedModel?.id">
+          <div class="model-info">
+            <div class="model-name">{{ model.name }}</div>
+            <div class="model-description" *ngIf="model.description">{{ model.description }}</div>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" *ngIf="model.id === selectedModel?.id">
+            <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

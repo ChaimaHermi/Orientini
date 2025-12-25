@@ -1,0 +1,92 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo-container">
+      <img src="../../../../../assets/img/orientini_logo.png" alt="Orientini Logo" class="logo">
+    </div>
+
+    <h2>Bienvenue sur Orientini</h2>
+    <p class="subtitle">Connectez-vous pour accéder à votre espace</p>
+
+<p class="description">
+  Orientini est un assistant intelligent qui vous aide à choisir
+  votre orientation universitaire en fonction de votre profil.
+</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email">Adresse email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          placeholder="votre@email.com"
+          [class.invalid]="form.get('email')?.invalid && form.get('email')?.touched">
+        <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="error-message">
+          <span *ngIf="form.get('email')?.errors?.['required']">L'email est requis</span>
+          <span *ngIf="form.get('email')?.errors?.['email']">Veuillez entrer un email valide</span>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <div class="password-input-container">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            placeholder="Votre mot de passe"
+            [class.invalid]="form.get('password')?.invalid && form.get('password')?.touched">
+          <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
+            <i [ngClass]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+          </button>
+        </div>
+        <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="error-message">
+          <span *ngIf="form.get('password')?.errors?.['required']">Le mot de passe est requis</span>
+          <span *ngIf="form.get('password')?.errors?.['minlength']">
+            Le mot de passe doit contenir au moins 6 caractères
+          </span>
+        </div>
+      </div>
+
+      <!-- Remember Me -->
+      <div class="form-options">
+        <label class="checkbox-container">
+          <input type="checkbox" formControlName="rememberMe">
+          <span class="checkmark"></span>
+          Se souvenir de moi
+        </label>
+        <div class="forgot-password-link">
+          <button type="button" class="forgot-password-button" (click)="goToForgotPassword()">Mot de passe oublié ?</button>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" [disabled]="isLoading">
+        <span>Se connecter</span>
+        <span *ngIf="isLoading" class="spinner">
+            <i class="fa fa-spinner fa-spin"></i>
+        </span>
+      </button>
+    </form>
+
+    <!-- Message d'erreur -->
+    <div *ngIf="errorMessage" class="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Footer -->
+    <div class="auth-footer">
+      Nouveau sur la plateforme ? <a (click)="goToRegister()">Créer un compte</a>
+    </div>
+
+    <!-- Social Login -->
+    <div class="divider"><span>ou continuer avec</span></div>
+    <button type="button" class="google-auth-button" (click)="onGoogleLogin()" [disabled]="isLoading">
+      <img src="../../../../../assets/img/icone-google.png" alt="Google" width="18">
+      Google
+    </button>
+  </div>
+</div>

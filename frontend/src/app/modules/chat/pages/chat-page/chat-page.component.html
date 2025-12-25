@@ -1,0 +1,58 @@
+<div class="chat-container">
+  <div class="sidebar-container" [class.closed]="!sidebarOpen">
+    <app-sidebar [conversations]="conversations" 
+                 [sidebarOpen]="sidebarOpen"
+                 (newChat)="onNewChat()"
+                 (selectConversation)="onSelectConversation($event)"
+                 (sidebarToggled)="toggleSidebar()">
+    </app-sidebar>
+  </div>
+  
+  <div class="main-content" [class.sidebar-closed]="!sidebarOpen">
+    <div class="chat-header">
+      <button class="menu-button" (click)="toggleSidebar()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <h1>Orientini</h1>
+      <div class="model-selector-container">
+        <app-model-selector
+          [models]="availableModels"
+          [selectedModel]="currentModel"
+          (modelChange)="onModelChange($event)">
+        </app-model-selector>
+      </div>
+    </div>
+    
+    <div class="chat-messages-container">
+      <app-chat-messages [messages]="currentMessages" 
+                         [files]="uploadedFiles"
+                         [isLoading]="isLoading"
+                         (viewFile)="onViewFile($event)">
+      </app-chat-messages>
+    </div>
+    
+    <div class="chat-input-container">
+      <div class="file-uploader-container" *ngIf="showFileUploader">
+        <app-file-uploader (fileUpload)="onFileUpload($event)"
+                          (close)="showFileUploader = false">
+        </app-file-uploader>
+      </div>
+      <app-chat-input 
+        [files]="uploadedFiles"
+        (messageSent)="onSendMessage($event)"
+        (openFileUploader)="showFileUploader = true"
+        (fileRemoved)="onRemoveFile($event)">
+      </app-chat-input>
+      <div class="disclaimer">
+        L'IA peut faire des erreurs. Veuillez vérifier les informations importantes.
+      </div>
+    </div>
+  </div>
+
+  <app-file-viewer *ngIf="viewedFile" 
+                   [file]="viewedFile"
+                   (close)="viewedFile = null">
+  </app-file-viewer>
+</div>

@@ -1,0 +1,35 @@
+<div class="input-container" [class.has-files]="hasFiles">
+  <div class="file-preview" *ngIf="hasFiles">
+    <div class="file-item" *ngFor="let file of files">
+      <span class="file-name">{{ file.name }}</span>
+      <button class="remove-file" (click)="emitRemoveFile(file)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <textarea #textarea
+            placeholder="Message Assistant SFD IA..." 
+            rows="1"
+            [(ngModel)]="messageText"
+            name="messageText"
+            (keydown.enter)="onEnter($event)"
+            (input)="adjustTextareaHeight()">
+  </textarea>
+  
+  <div class="actions">
+    <button class="action-button" (click)="emitOpenFileUploader()" title="Attach files">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M21 15V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V15M17 8L12 3M12 3L7 8M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    
+    <button class="send-button" [disabled]="!messageText" (click)="sendTextMessage()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+@use 'sass:color'; 
+
+// Primary colors
+$primary: #193676;
+$secondary: #4c7ade;
+$primary-light: rgba(16, 163, 127, 0.1);
+$primary-dark: color.adjust($primary, $lightness: -10%);
+
+// Background colors
+$background-primary: #ffffff;
+$background-secondary: #f7f7f8;
+$background-tertiary: #ececf1;
+
+// Text colors
+$text-primary: #374151;
+$text-secondary: #6b7280;
+$text-tertiary: #9ca3af;
+
+// Border colors
+$border-color: #e5e7eb;
+$border-dark: #d1d5db;
+
+// State colors
+$error: #ef4444;
+$success: #10b981;
+$warning: #f59e0b;
+
+// File viewer specific
+$user-message-bg: $primary;
+$user-message-text: white;
+$bot-message-bg: $background-secondary;
+$bot-message-text: $text-primary;
+$avatar-bg: $background-tertiary;
+$avatar-color: $text-secondary;
+$bot-icon-color: $primary;
+$file-bg: $background-primary;
+$file-border: $border-color;
+$file-hover-bg: $background-secondary;
+$file-icon: $text-secondary;
+$model-bg: $primary-light;
+$model-text: $primary;
+$file-hover-border: #d1d5db !default;
+$file-text: #111827 !default;

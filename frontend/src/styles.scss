@@ -1,0 +1,71 @@
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+/*** Button Start ***/
+.btn {
+    font-weight: 600;
+    transition: 0.5s;
+  }
+  
+  .btn-square {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .btn-sm-square {
+    width: 34px;
+    height: 34px;
+  }
+  
+  .btn-md-square {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .btn-lg-square {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .btn-square,
+  .btn-sm-square,
+  .btn-md-square,
+  .btn-lg-square {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: normal;
+    border-radius: 50%;
+  }
+  
+  .btn.btn-primary {
+    background: var(--bs-secondary) !important;
+    color: var(--bs-white) !important;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    transition: 0.5s;
+  }
+  
+  .btn.btn.btn-primary:hover {
+    background: var(--bs-primary) !important;
+    color: var(--bs-secondary);
+    border: 1px solid var(--bs-secondary);
+  }
+  
+  .btn.btn-secondary {
+    background: transparent;
+    color: var(--bs-secondary);
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    border: none;
+    transition: 0.5s;
+  }
+  
+  .btn.btn-secondary:hover {
+    color: var(--bs-primary) !important;
+  }
+  
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

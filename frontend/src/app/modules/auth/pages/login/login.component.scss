@@ -1,0 +1,296 @@
+@use 'sass:color';
+@use '../../../../../styles/colors' as *;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, $background-secondary 0%, $background-primary 100%);
+  padding: 2rem;
+}
+
+.login-card {
+  background-color: $background-primary;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  width: 100%;
+  max-width: 36rem;
+  animation: slideUp 0.5s ease;
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo-container {
+    text-align: center;
+    margin-bottom: 0.5rem;
+
+    .logo {
+      width: 100px;
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $text-primary;
+    text-align: center;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+    color: $text-secondary;
+    text-align: center;
+  }
+
+  .error-message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: rgba($error, 0.1);
+    color: $error;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .description {
+  margin:1px 0 10px;
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.6;
+}
+  .auth-footer {
+    margin-top: 1.25rem;
+    font-size: 0.8125rem;
+    color: $text-secondary;
+    text-align: center;
+
+    a {
+      color: $primary;
+      text-decoration: none;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .divider {
+    text-align: center;
+    margin: 1.5rem 0;
+    font-size: 0.8125rem;
+    color: $text-secondary;
+
+    span {
+      background: $background-primary;
+      padding: 0 1rem;
+    }
+  }
+
+  .google-auth-button {
+    width: 100%;
+    padding: 0.5rem;
+    background: white;
+    border: 1px solid $border-color;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    cursor: pointer;
+  }
+}
+
+.auth-form {
+  width: 100%;
+
+  button[type="submit"] {
+    width: 100%;
+    padding: 0.5rem;
+    background-color: $primary;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $primary-dark;
+    }
+
+    &:disabled {
+      background-color: $text-tertiary;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: $text-primary;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid $border-color;
+    border-radius: 0.375rem;
+    font-size: 0.8125rem;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 2px rgba($primary, 0.1);
+    }
+
+    &.invalid {
+      border-color: $error;
+    }
+
+    &::placeholder {
+      color: $text-tertiary;
+    }
+  }
+
+  .error-message {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: $error;
+
+    span {
+      display: block;
+    }
+  }
+}
+
+.password-input-container {
+  position: relative;
+
+  input {
+    padding-right: 2.25rem;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: $text-secondary;
+    font-size: 0.8125rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $background-tertiary;
+    }
+  }
+}
+.forgot-password-link {
+  text-align: right;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+
+  .forgot-password-button {
+    background: none;
+    border: none;
+    color: $primary;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    font-weight: 500;
+    padding: 0;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  margin-bottom: 1.25rem;
+
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+
+    input {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .forgot-password {
+    color: $primary;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+//
+// RESPONSIVE DESIGN
+//
+
+@media (max-width: 768px) {
+  .login-card {
+    padding: 1.5rem;
+    max-width: 90vw;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+  }
+
+  .subtitle {
+    font-size: 0.8125rem;
+  }
+
+  .google-auth-button,
+  button[type="submit"] {
+    font-size: 0.75rem;
+  }
+
+  .form-group input {
+    font-size: 0.75rem;
+  }
+
+  .auth-footer,
+  .divider,
+  .form-options {
+    font-size: 0.75rem;
+  }
+}

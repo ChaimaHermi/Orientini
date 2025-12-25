@@ -1,0 +1,67 @@
+<div class="sidebar" [class.closed]="!sidebarOpen">
+  <div class="sidebar-header">
+    <button class="toggle-button" (click)="onToggleSidebar()" [attr.title]="sidebarOpen ? 'Réduire' : 'Ouvrir'">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+<button class="new-chat-button" (click)="onNewChatClick()" [ngClass]="{ iconOnly: !sidebarOpen }">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span *ngIf="sidebarOpen">Nouvelle conversation</span>
+  </button>
+
+  <div class="conversation-list">
+    <div class="conversation-header" *ngIf="sidebarOpen">
+      <h3>Historique des conversations</h3>
+    </div>
+
+<div class="conversations">
+  <div class="conversation-item" *ngFor="let conversation of conversations">
+    <button class="conversation"
+            (click)="onSelect(conversation)"
+            [class.active]="isActive(conversation)"
+            [ngClass]="{ iconOnly: !sidebarOpen }">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M21 11.5C21.0034 12.8199 20.6951 14.1219 20.1 15.3C19.3944 16.7117 18.3098 17.8992 16.9674 18.7293C15.6251 19.5594 14.0782 19.9994 12.5 20C11.1801 20.0034 9.87812 19.6951 8.7 19.1L3 21L4.9 15.3C4.30493 14.1219 3.99656 12.8199 4 11.5C4.00061 9.92176 4.44061 8.37488 5.27072 7.03258C6.10083 5.69028 7.28825 4.60557 8.7 3.9C9.87812 3.30493 11.1801 2.99656 12.5 3H13C15.0843 3.11499 17.053 3.99479 18.5291 5.47086C20.0052 6.94693 20.885 8.91568 21 11V11.5Z" 
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="conversation-content" *ngIf="sidebarOpen">
+        <div class="conversation-title">{{ conversation.title }}</div>
+        <div class="conversation-date">{{ conversation.date | date:'shortDate' }}</div>
+      </div>
+    </button>
+
+    <!-- Bouton delete à côté du bouton conversation -->
+    <button class="delete-button" 
+            (click)="onDeleteConversation(conversation.id, $event)" 
+            title="Supprimer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7M10 11V17M14 11V17M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7M4 7H20" 
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+  </div>
+<div class="sidebar-footer">
+  <div class="user-info">
+    <img [src]="userProfilePicture"
+     (error)="onImageError()"
+     class="profile-picture"
+     alt="Photo de profil" />
+
+    <span *ngIf="sidebarOpen && userEmail">{{ userEmail }}</span>
+  </div>
+
+  <button class="footer-button" (click)="logout()" [ngClass]="{ iconOnly: !sidebarOpen }">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M15 12H3M12 5L19 12L12 19" stroke="currentColor" stroke-width="2" />
+    </svg>
+    <span *ngIf="sidebarOpen">Se déconnecter</span>
+  </button>
+</div>

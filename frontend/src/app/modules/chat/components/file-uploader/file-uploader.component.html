@@ -1,0 +1,53 @@
+<div class="file-uploader">
+  <div class="header">
+    <h3>Téléverser des fichiers</h3>
+    <button class="close-button" (click)="close.emit()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+  
+  <div class="drop-area" 
+       (dragover)="onDragOver($event)"
+       (dragleave)="onDragLeave($event)"
+       (drop)="onDrop($event)"
+       [class.dragover]="isDragover">
+    <div class="drop-content">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+        <path d="M21 15V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V15M17 8L12 3M12 3L7 8M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <p>Glissez-déposez des fichiers ici</p>
+      <span class="hint">ou</span>
+      <label for="fileInput" class="browse-button">Parcourir les fichiers</label>
+      <input id="fileInput" type="file" multiple (change)="onFileInputChange($event)" style="display: none;">
+    </div>
+  </div>
+  
+  <div class="file-list" *ngIf="files.length > 0">
+    <div class="file-item" *ngFor="let file of files; let i = index">
+      <div class="file-info">
+        <div class="file-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="file-details">
+          <div class="file-name">{{ file.name }}</div>
+          <div class="file-size">{{ file.size | fileSize }}</div>
+        </div>
+      </div>
+      <button class="remove-button" (click)="removeFile(i)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <div class="actions">
+    <button class="cancel-button" (click)="close.emit()">Annuler</button>
+    <button class="upload-button" [disabled]="files.length === 0" (click)="uploadFiles()">Téléverser</button>
+  </div>
+</div>
