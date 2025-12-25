@@ -10,7 +10,7 @@ def rag_pipeline(question: str) -> str:
         return "الرجاء طرح سؤال واضح."
 
     # On limite légèrement le contexte pour laisser finir Gemini
-    chunks = search(question, top_k=6)
+    chunks = search(question, top_k=50)
 
     if not chunks:
         return "لا تتوفر معطيات كافية للإجابة عن هذا السؤال."
