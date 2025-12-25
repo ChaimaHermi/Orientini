@@ -20,4 +20,4 @@ GEMINI_MODEL = "gemini-2.5-flash"
 LLM_TEMPERATURE = 0.2
 
 # ⬇️ CLÉ DU PROBLÈME : marge large pour réponses narratives
-LLM_MAX_OUTPUT_TOKENS = 4096
+LLM_MAX_OUTPUT_TOKENS = 8096
