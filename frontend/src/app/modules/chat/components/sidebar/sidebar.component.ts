@@ -89,21 +89,20 @@ isActive(conversation: Conversation): boolean {
 
 onDeleteConversation(conversationId: string, event: Event) {
   event.stopPropagation();
-  if (confirm("Voulez-vous vraiment supprimer cette conversation ?")) {
-    this.chatService.deleteConversation(conversationId).subscribe({
-      next: () => {
-        this.conversations = this.conversations.filter(c => c.id !== conversationId);
-        if (this.activeConversationId === conversationId) {
-          this.activeConversationId = '';
-          this.selectConversation.emit(null as any);
-        }
-      },
-      error: (err) => {
-        console.error("Erreur suppression conversation", err);
+
+  if (!confirm('Supprimer cette conversation ?')) return;
+
+  this.chatService.deleteConversation(conversationId).subscribe({
+    next: () => {
+      this.conversations = this.conversations.filter(c => c.id !== conversationId);
+      if (this.activeConversationId === conversationId) {
+        this.activeConversationId = '';
+        this.newChat.emit();
       }
-    });
-  }
+    }
+  });
 }
+
 
 
 }

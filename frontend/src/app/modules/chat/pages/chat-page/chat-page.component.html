@@ -16,43 +16,21 @@
         </svg>
       </button>
       <h1>Orientini</h1>
-      <div class="model-selector-container">
-        <app-model-selector
-          [models]="availableModels"
-          [selectedModel]="currentModel"
-          (modelChange)="onModelChange($event)">
-        </app-model-selector>
-      </div>
     </div>
     
     <div class="chat-messages-container">
-      <app-chat-messages [messages]="currentMessages" 
-                         [files]="uploadedFiles"
-                         [isLoading]="isLoading"
-                         (viewFile)="onViewFile($event)">
+      <app-chat-messages [messages]="currentMessages">
       </app-chat-messages>
     </div>
     
     <div class="chat-input-container">
-      <div class="file-uploader-container" *ngIf="showFileUploader">
-        <app-file-uploader (fileUpload)="onFileUpload($event)"
-                          (close)="showFileUploader = false">
-        </app-file-uploader>
-      </div>
       <app-chat-input 
-        [files]="uploadedFiles"
         (messageSent)="onSendMessage($event)"
-        (openFileUploader)="showFileUploader = true"
-        (fileRemoved)="onRemoveFile($event)">
+        >
       </app-chat-input>
       <div class="disclaimer">
         L'IA peut faire des erreurs. Veuillez vérifier les informations importantes.
       </div>
     </div>
   </div>
-
-  <app-file-viewer *ngIf="viewedFile" 
-                   [file]="viewedFile"
-                   (close)="viewedFile = null">
-  </app-file-viewer>
 </div>

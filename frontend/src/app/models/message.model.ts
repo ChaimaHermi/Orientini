@@ -5,6 +5,4 @@ export interface Message {
   content: string | SafeHtml;
   isUser: boolean;
   timestamp: Date;
-  files?: File[];
-  model_used?: string;
 }

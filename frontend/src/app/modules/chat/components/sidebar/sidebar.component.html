@@ -31,7 +31,7 @@
       </svg>
       <div class="conversation-content" *ngIf="sidebarOpen">
         <div class="conversation-title">{{ conversation.title }}</div>
-        <div class="conversation-date">{{ conversation.date | date:'shortDate' }}</div>
+        <div class="conversation-date" *ngIf="conversation.date">{{ conversation.date | date:'shortDate' }}</div>
       </div>
     </button>
 

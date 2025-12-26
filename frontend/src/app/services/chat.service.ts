@@ -21,32 +21,20 @@ export class ChatService {
       Authorization: `Bearer ${token}`
     });
   }
+sendQuestion(question: string, conversationId?: string) {
+  const formData = new FormData();
+  formData.append('question', question);
 
-  sendQuestion(
-    question: string,
-    file: File | null,
-    model?: string,
-    conversationId?: string
-  ): Observable<any> {
-    const formData = new FormData();
-    formData.append('question', question);
-    if (conversationId) {
-      formData.append('conversation_id', conversationId);
-    }
-    if (file) formData.append('file', file);
-    if (model) formData.append('model', model);
-
-    console.log('[DEBUG] FormData envoyé à /chat/ask');
-
-    return this.http.post<any>(`${this.apiUrl}/ask`, formData, {
-      headers: this.getHeaders()
-    }).pipe(
-      catchError((error) => {
-        console.error('[ERREUR] Backend:', error);
-        return throwError(() => error);
-      })
-    );
+  if (conversationId && conversationId !== 'default') {
+    formData.append('conversation_id', conversationId);
   }
+
+  return this.http.post<any>(
+    `${this.apiUrl}/ask`,
+    formData,
+    { headers: this.getHeaders() }
+  );
+}
 
   getConversations(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/conversations`, {
