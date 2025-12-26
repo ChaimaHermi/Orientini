@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-
+# request
 class QuestionRequest(BaseModel):
     question: str
 
