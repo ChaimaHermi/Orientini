@@ -21,6 +21,11 @@
     <div class="chat-messages-container">
       <app-chat-messages [messages]="currentMessages">
       </app-chat-messages>
+       <!-- Spinner IA -->
+  <div class="ai-loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Orientini réfléchit…</span>
+  </div>
     </div>
     
     <div class="chat-input-container">
