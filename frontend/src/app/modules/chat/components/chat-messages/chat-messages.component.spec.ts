@@ -20,4 +20,5 @@ describe('ChatMessagesComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  
 });

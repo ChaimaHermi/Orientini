@@ -5,4 +5,8 @@ export interface Message {
   content: string | SafeHtml;
   isUser: boolean;
   timestamp: Date;
+
+  images?: {
+    [entityId: string]: string[];
+  };
 }

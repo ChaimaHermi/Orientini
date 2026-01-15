@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ISAMM",
+    "name_ar": "المعهد العالي للفنون والملتيميديا بمنوبة",
+    "university_ar": "جامعة منوبة",
+    "city": "Manouba"
+  },
+  {
+    "id": "FST",
+    "name_ar": "كلية العلوم بتونس",
+    "university_ar": "جامعة تونس المنار",
+    "city": "Tunis"
+  },
+  {
+    "id": "FMT",
+    "name_ar": "كلية الطب بتونس",
+    "university_ar": "جامعة تونس المنار",
+    "city": "Tunis"
+  },
+  {
+    "id": "FDSPT",
+    "name_ar": "كلية الحقوق والعلوم السياسية بتونس",
+    "university_ar": "جامعة تونس المنار",
+    "city": "Tunis"
+  },
+  {
+    "id": "FSEGT",
+    "name_ar": "كلية العلوم الاقتصادية والتصرف بتونس",
+    "university_ar": "جامعة تونس",
+    "city": "Tunis"
+  },
+  {
+    "id": "FLAH",
+    "name_ar": "كلية الآداب والفنون والإنسانيات بمنوبة",
+    "university_ar": "جامعة منوبة",
+    "city": "Manouba"
+  }
+]

@@ -1,209 +1,240 @@
 @use '../../../../../styles/colors' as *;
 
+/* =========================
+   CONTAINER GLOBAL
+   ========================= */
+
 .messages-container {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   padding: 0 1rem;
-  
-  .message {
-    display: flex;
-    gap: 1rem;
-    max-width: 90%;
-    
-    &.user {
-      align-self: flex-end;
-      flex-direction: row-reverse;
-      
-      .content {
-        align-items: flex-end;
-        
-        .text {
-          background: $user-message-bg;
-          color: $user-message-text;
-          border-radius: 18px 4px 18px 18px;
-        }
-        
-        .files {
-          .file-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-          }
-        }
-      }
-    }
-    
-    .avatar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: $avatar-bg;
-      color: $avatar-color;
-      flex-shrink: 0;
-      
-      .bot-icon {
-        color: $bot-icon-color;
-      }
-    }
-    
-    .content {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      max-width: calc(100% - 52px);
-      
-      .text {
-        padding: 0.75rem 1rem;
-        background: $bot-message-bg;
-        color: $bot-message-text;
-        border-radius: 4px 18px 18px 18px;
-        line-height: 1.5;
-        word-break: break-word;
-      }
-      
-      .files {
-        .file-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-          gap: 12px;
-          margin-top: 8px;
-          
-          .file-card {
-            border: 1px solid $file-border;
-            border-radius: 8px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: $file-bg;
-            
-            &:hover {
-              background: $file-hover-bg;
-              border-color: $file-hover-border;
-            }
-            
-            .file-icon {
-              text-align: center;
-              
-              .file-preview {
-                width: 100%;
-                height: 80px;
-                object-fit: cover;
-                border-radius: 4px;
-                margin-bottom: 8px;
-              }
-            }
-            
-            .file-info {
-              text-align: center;
-              
-              .file-name {
-                font-size: 0.875rem;
-                font-weight: 500;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                color: $file-text;
-              }
-              
-              .file-size {
-                font-size: 0.75rem;
-                color: $text-secondary;
-              }
-            }
-          }
-        }
-      }
-      
-      .meta {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 0.75rem;
-        color: $text-secondary;
-        
-        .model {
-          background: $model-bg;
-          color: $model-text;
-          padding: 0.125rem 0.5rem;
-          border-radius: 4px;
-          font-size: 0.6875rem;
-          font-weight: 500;
-        }
-      }
-    }
-  }
-  
-  .loading-message {
-    opacity: 0.8;
-    display: flex;
-    gap: 1rem;
-    
-    .avatar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: $avatar-bg;
-      color: $avatar-color;
-      flex-shrink: 0;
-      
-      .bot-icon {
-        color: $bot-icon-color;
-      }
-    }
-    
-    .content {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      max-width: calc(100% - 52px);
-      
-      .loading-text {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: $text-secondary;
-        font-size: 0.95em;
-        padding: 0.75rem 1rem;
-        background: $bot-message-bg;
-        border-radius: 4px 18px 18px 18px;
-        
-        .typing-indicator {
-          display: inline-flex;
-          align-items: center;
-          height: 20px;
-          
-          .dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: $text-secondary;
-            margin: 0 2px;
-            animation: typingAnimation 1.4s infinite ease-in-out both;
-            
-            &:nth-child(1) {
-              animation-delay: 0ms;
-            }
-            
-            &:nth-child(2) {
-              animation-delay: 150ms;
-            }
-            
-            &:nth-child(3) {
-              animation-delay: 300ms;
-            }
-          }
-        }
-      }
-    }
-  }
 }
+
+/* =========================
+   MESSAGE
+   ========================= */
+
+.message {
+  display: flex;
+  gap: 1rem;
+  max-width: 90%;
+}
+
+/* Message utilisateur */
+.message.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.message.user .text {
+  background: $user-message-bg;
+  color: $user-message-text;
+  border-radius: 18px 4px 18px 18px;
+}
+
+/* =========================
+   AVATAR
+   ========================= */
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: $avatar-bg;
+  color: $avatar-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bot-icon {
+  color: $bot-icon-color;
+}
+
+/* =========================
+   CONTENU MESSAGE
+   ========================= */
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: calc(100% - 52px);
+}
+
+/* =========================
+   TEXTE
+   ========================= */
+
+.text {
+  padding: 0.75rem 1rem;
+  background: $bot-message-bg;
+  color: $bot-message-text;
+  border-radius: 4px 18px 18px 18px;
+  line-height: 1.7;
+  font-size: 0.95rem;
+  word-break: break-word;
+}
+
+/* Titres (📚 🏫 📐 🖼️ ℹ️) */
+.section-title {
+  font-weight: 600;
+  margin: 12px 0 6px;
+  color: $bot-icon-color;
+}
+
+/* Listes */
+.text ul {
+  padding-left: 20px;
+  margin: 6px 0;
+}
+
+.text li {
+  margin-bottom: 6px;
+}
+
+/* =========================
+   IMAGES MURAG (🔥 IMPORTANT)
+   ========================= */
+
+.files {
+  margin-top: 10px;
+}
+
+.file-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.file-preview {
+  width: 180px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.file-preview:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+/* =========================
+   META (heure, modèle…)
+   ========================= */
+
+.meta {
+  font-size: 0.75rem;
+  color: $text-secondary;
+}
+
+/* =========================
+   MESSAGE LOADING
+   ========================= */
+
+.loading-message {
+  opacity: 0.8;
+  display: flex;
+  gap: 1rem;
+}
+
+.loading-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: $text-secondary;
+  font-size: 0.95em;
+  padding: 0.75rem 1rem;
+  background: $bot-message-bg;
+  border-radius: 4px 18px 18px 18px;
+}
+
+/* =========================
+   TYPING DOTS
+   ========================= */
+
+.typing-indicator {
+  display: inline-flex;
+  align-items: center;
+}
+.file-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.image-card {
+  position: relative;
+}
+
+.file-preview {
+  width: 180px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  cursor: zoom-in;
+  transition: transform 0.2s ease;
+}
+
+.file-preview:hover {
+  transform: scale(1.05);
+}
+
+/* ⬇️ Download button */
+.download-btn {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.download-btn:hover {
+  background: black;
+}
+
+/* 🖼️ LIGHTBOX */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  cursor: zoom-out;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+}
+
+.typing-indicator .dot {
+  width: 6px;
+  height: 6px;
+  margin: 0 2px;
+  border-radius: 50%;
+  background-color: $text-secondary;
+  animation: typingAnimation 1.4s infinite ease-in-out both;
+}
+
+.typing-indicator .dot:nth-child(1) { animation-delay: 0ms; }
+.typing-indicator .dot:nth-child(2) { animation-delay: 150ms; }
+.typing-indicator .dot:nth-child(3) { animation-delay: 300ms; }
 
 @keyframes typingAnimation {
   0%, 60%, 100% {
