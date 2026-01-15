@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 
 from app.api.v1.routes import auth, chat
@@ -15,14 +16,15 @@ async def lifespan(app: FastAPI):
     yield
 
 
-
-
 app = FastAPI(
     title="Orientini API",
     version="1.0.0",
     description="AI assistant for Tunisian students orientation",
     lifespan=lifespan
 )
+
+# 🔹 STATIC FILES (IMAGES MuRAG)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # CORS
 app.add_middleware(

@@ -13,19 +13,16 @@ class ConversationService:
         self.conversations = db.conversations
         self.messages = db.messages
 
+    # ==================================================
+    # ASK (RAG + MuRAG)
+    # ==================================================
     def ask(
         self,
         user_id: str,
         question: str,
         conversation_id: str | None = None
     ):
-        """
-        Crée une conversation si nécessaire,
-        ajoute les messages user + assistant,
-        retourne l'id + le titre + la réponse IA
-        """
-
-        # 🆕 nouvelle conversation
+        # 🆕 Nouvelle conversation
         if not conversation_id or conversation_id == "default":
             conversation_title = generate_conversation_title(question)
 
@@ -40,7 +37,7 @@ class ConversationService:
             )
             conversation_id = str(result.inserted_id)
 
-        # ♻️ conversation existante
+        # ♻️ Conversation existante
         else:
             if not ObjectId.is_valid(conversation_id):
                 raise ValueError("Invalid conversation id")
@@ -52,9 +49,11 @@ class ConversationService:
             if not conv:
                 raise ValueError("Conversation not found")
 
-            conversation_title = conv["title"]
+            conversation_title = conv.get("title", "")
 
-        # 💬 message utilisateur
+        # ================================
+        # 💬 MESSAGE UTILISATEUR
+        # ================================
         self.messages.insert_one(
             Message(
                 conversation_id=conversation_id,
@@ -64,25 +63,40 @@ class ConversationService:
             ).dict(exclude={"id"}, exclude_none=True)
         )
 
-        # 🤖 réponse IA
-        answer = RagService.ask(question)
+        # ================================
+        # 🤖 IA (RAG + MuRAG)
+        # ================================
+        result = RagService.ask(question)
 
-        # 💬 message assistant
+        answer_text = result.get("answer", "")
+        images = result.get("images")   # dict ou None
+
+        # ================================
+        # 💬 MESSAGE ASSISTANT (TEXTE + IMAGES)
+        # ================================
         self.messages.insert_one(
             Message(
                 conversation_id=conversation_id,
                 role="assistant",
-                content=answer,
+                content=answer_text,
+                images=images,              # ✅ STOCKAGE DES IMAGES
                 created_at=datetime.utcnow()
             ).dict(exclude={"id"}, exclude_none=True)
         )
 
+        # ================================
+        # 🔁 RÉPONSE API
+        # ================================
         return {
             "conversation_id": conversation_id,
             "conversation_title": conversation_title,
-            "answer": answer
+            "answer": answer_text,
+            "images": images
         }
 
+    # ==================================================
+    # LISTE DES CONVERSATIONS
+    # ==================================================
     def get_user_conversations(self, user_id: str):
         conversations = self.conversations.find(
             {"user_id": user_id},
@@ -92,12 +106,15 @@ class ConversationService:
         return [
             {
                 "id": str(c["_id"]),
-                "title": c["title"],
-                "created_at": c["created_at"]
+                "title": c.get("title", ""),
+                "created_at": c.get("created_at")
             }
             for c in conversations
         ]
 
+    # ==================================================
+    # MESSAGES D’UNE CONVERSATION
+    # ==================================================
     def get_conversation_messages(self, conversation_id: str):
         if not ObjectId.is_valid(conversation_id):
             raise ValueError("Invalid conversation id")
@@ -108,6 +125,9 @@ class ConversationService:
             .sort("created_at", 1)
         )
 
+    # ==================================================
+    # SUPPRESSION
+    # ==================================================
     def delete_conversation(self, conversation_id: str, user_id: str):
         if not ObjectId.is_valid(conversation_id):
             raise ValueError("Invalid conversation id")
@@ -122,4 +142,5 @@ class ConversationService:
 
         self.conversations.delete_one({"_id": ObjectId(conversation_id)})
         self.messages.delete_many({"conversation_id": conversation_id})
+
         return True

@@ -24,7 +24,9 @@
     "bootstrap": "^5.3.7",
     "counterup2": "^2.0.2",
     "jquery": "^3.7.1",
+    "marked": "^15.0.12",
     "ngx-cookie-service": "^19.1.2",
+    "ngx-markdown": "^19.1.1",
     "owl.carousel": "^2.3.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
@@ -33,7 +35,7 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^19.0.1",
+    "@angular-devkit/build-angular": "^19.2.19",
     "@angular/cli": "^19.0.1",
     "@angular/compiler-cli": "^19.0.0",
     "@types/jasmine": "~5.1.0",

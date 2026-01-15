@@ -1,0 +1,71 @@
+[
+  {
+    "id": "ISAMM",
+    "name_ar": "المعهد العالي للفنون والملتيميديا بمنوبة",
+    "name_fr": "Institut Supérieur des Arts et du Multimédia de la Manouba",
+    "university_ar": "جامعة منوبة",
+    "city": "Manouba",
+    "description_ar": "مؤسسة جامعية مختصة في الفنون، التصميم، والملتيميديا",
+    "images": [
+      "/static/universities/isamm/isamm_campus_1.jpg",
+      "/static/universities/isamm/isamm_workshop_1.jpg"
+    ]
+  },
+  {
+    "id": "FST",
+    "name_ar": "كلية العلوم بتونس",
+    "name_fr": "Faculté des Sciences de Tunis",
+    "university_ar": "جامعة تونس المنار",
+    "city": "Tunis",
+    "description_ar": "كلية جامعية مختصة في العلوم الأساسية والتطبيقية",
+    "images": [
+      "/static/universities/fst/fst_campus_1.jpg",
+      "/static/universities/fst/fst_laboratory_1.jpg"
+    ]
+  },
+  {
+    "id": "FMT",
+    "name_ar": "كلية الطب بتونس",
+    "name_fr": "Faculté de Médecine de Tunis",
+    "university_ar": "جامعة تونس المنار",
+    "city": "Tunis",
+    "description_ar": "مؤسسة جامعية لتكوين الأطباء والبحث الطبي",
+    "images": [
+      "/static/universities/fmt/fmt_campus_1.jpg",
+      "/static/universities/fmt/fmt_students_1.jpg"
+    ]
+  },
+  {
+    "id": "FDSPT",
+    "name_ar": "كلية الحقوق والعلوم السياسية بتونس",
+    "name_fr": "Faculté de Droit et des Sciences Politiques de Tunis",
+    "university_ar": "جامعة تونس المنار",
+    "city": "Tunis",
+    "description_ar": "كلية مختصة في القانون والعلوم السياسية",
+    "images": [
+      "/static/universities/fdspt/fdspt_campus_1.jpg"
+    ]
+  },
+  {
+    "id": "FSEGT",
+    "name_ar": "كلية العلوم الاقتصادية والتصرف بتونس",
+    "name_fr": "Faculté des Sciences Économiques et de Gestion de Tunis",
+    "university_ar": "جامعة تونس",
+    "city": "Tunis",
+    "description_ar": "كلية مختصة في الاقتصاد، التصرف، والمحاسبة",
+    "images": [
+      "/static/universities/fsegt/fsegt_campus_1.jpg"
+    ]
+  },
+  {
+    "id": "FLAH",
+    "name_ar": "كلية الآداب والفنون والإنسانيات بمنوبة",
+    "name_fr": "Faculté des Lettres, des Arts et des Humanités de la Manouba",
+    "university_ar": "جامعة منوبة",
+    "city": "Manouba",
+    "description_ar": "كلية مختصة في الآداب، الفنون، والعلوم الإنسانية",
+    "images": [
+      "/static/universities/flah/flah_campus_1.jpg"
+    ]
+  }
+]

@@ -1,41 +1,51 @@
 <div class="chat-container">
+
+  <!-- ===== SIDEBAR ===== -->
   <div class="sidebar-container" [class.closed]="!sidebarOpen">
-    <app-sidebar [conversations]="conversations" 
-                 [sidebarOpen]="sidebarOpen"
-                 (newChat)="onNewChat()"
-                 (selectConversation)="onSelectConversation($event)"
-                 (sidebarToggled)="toggleSidebar()">
+    <app-sidebar
+      [conversations]="conversations"
+      [sidebarOpen]="sidebarOpen"
+      (newChat)="onNewChat()"
+      (selectConversation)="onSelectConversation($event)"
+      (sidebarToggled)="toggleSidebar()">
     </app-sidebar>
   </div>
-  
+
+  <!-- ===== CONTENU PRINCIPAL ===== -->
   <div class="main-content" [class.sidebar-closed]="!sidebarOpen">
+
+    <!-- HEADER -->
     <div class="chat-header">
       <button class="menu-button" (click)="toggleSidebar()">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3 12H21M3 6H21M3 18H21"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
         </svg>
       </button>
       <h1>Orientini</h1>
     </div>
-    
+
+    <!-- ===== MESSAGES ===== -->
     <div class="chat-messages-container">
-      <app-chat-messages [messages]="currentMessages">
+      <app-chat-messages
+        [messages]="currentMessages"
+        [isLoading]="isLoading">
       </app-chat-messages>
-       <!-- Spinner IA -->
-  <div class="ai-loading" *ngIf="isLoading">
-    <div class="spinner"></div>
-    <span>Orientini réfléchit…</span>
-  </div>
     </div>
-    
+
+    <!-- ===== INPUT ===== -->
     <div class="chat-input-container">
-      <app-chat-input 
-        (messageSent)="onSendMessage($event)"
-        >
+      <app-chat-input
+        (messageSent)="onSendMessage($event)">
       </app-chat-input>
+
       <div class="disclaimer">
         L'IA peut faire des erreurs. Veuillez vérifier les informations importantes.
       </div>
     </div>
+
   </div>
 </div>

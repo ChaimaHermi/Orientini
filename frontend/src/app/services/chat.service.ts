@@ -1,64 +1,54 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
-import { SharedService } from './shared.service';
+import { ChatResponse } from '../models/chat-response.model';
+import { Conversation } from '../models/conversation.model';
+import { Message } from '../models/message.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
+
   private apiUrl = `${environment.apiUrl}/chat`;
 
-  constructor(
-    private http: HttpClient,
-    private sharedService: SharedService
-  ) {}
+  constructor(private http: HttpClient) {}
 
-  private getHeaders(): HttpHeaders {
-    const token = this.sharedService.getToken();
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-  }
-sendQuestion(question: string, conversationId?: string) {
-  const formData = new FormData();
-  formData.append('question', question);
+  // ✅ ICI on retourne ChatResponse (PAS Message)
+  sendQuestion(
+    question: string,
+    conversationId?: string
+  ): Observable<ChatResponse> {
 
-  if (conversationId && conversationId !== 'default') {
-    formData.append('conversation_id', conversationId);
-  }
+    const formData = new FormData();
+    formData.append('question', question);
 
-  return this.http.post<any>(
-    `${this.apiUrl}/ask`,
-    formData,
-    { headers: this.getHeaders() }
-  );
-}
+    if (conversationId) {
+      formData.append('conversation_id', conversationId);
+    }
 
-  getConversations(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/conversations`, {
-      headers: this.getHeaders()
-    });
-  }
-
-  getConversationMessages(conversationId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/conversations/${conversationId}`, {
-      headers: this.getHeaders()
-    }).pipe(
-      catchError((error) => {
-        console.error('[ERREUR] Récupération des messages:', error);
-        return throwError(() => error);
-      })
+    return this.http.post<ChatResponse>(
+      `${this.apiUrl}/ask`,
+      formData
     );
   }
 
-  deleteConversation(conversationId: string): Observable<any> {
-  return this.http.delete<any>(
-    `${this.apiUrl}/conversations/${conversationId}`,
-    {       headers: this.getHeaders()
- }
-  );
-}
+  getConversations(): Observable<Conversation[]> {
+    return this.http.get<Conversation[]>(
+      `${this.apiUrl}/conversations`
+    );
+  }
 
+  getConversationMessages(conversationId: string): Observable<Message[]> {
+    return this.http.get<Message[]>(
+      `${this.apiUrl}/conversations/${conversationId}`
+    );
+  }
+
+  deleteConversation(conversationId: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}/conversations/${conversationId}`
+    );
+  }
 }
